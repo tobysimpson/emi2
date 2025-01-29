@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
     ocl_ini(&ocl);
     
     //size
-    int n  = 6;
+    int n  = 3;
     
     //mesh (fine)
     struct msh_obj msh;
@@ -103,8 +103,6 @@ int main(int argc, const char * argv[])
         {
 //            printf("tim %2d\n", t);
             
-
-            
             /*
              =============================
              membrane
@@ -145,7 +143,7 @@ int main(int argc, const char * argv[])
 //            ocl.err = clSetKernelArg(ocl.vtx_zro,  1, sizeof(cl_mem),            (void*)&bb);
 //            ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_zro, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
             
-            //torso poisson
+            //poisson0
             mg_slv(&ocl, &mg, &mg.ops[0]);
             
             
@@ -155,7 +153,7 @@ int main(int argc, const char * argv[])
              =============================
              */
 
-            //torso poisson
+            //poisson1
             mg_slv(&ocl, &mg, &mg.ops[1]);
 
         } //t

@@ -48,8 +48,6 @@ struct ocl_obj
     cl_kernel           vtx_ini;    //init
     cl_kernel           vtx_ion;    //membrane
     
-
-    
 };
 
 

@@ -112,8 +112,6 @@ void ocl_fin(struct ocl_obj *ocl)
     ocl->err = clReleaseKernel(ocl->vtx_ini);
     ocl->err = clReleaseKernel(ocl->vtx_ion);
     
-
-
     //context
     ocl->err = clReleaseProgram(ocl->program);
     ocl->err = clReleaseCommandQueue(ocl->command_queue);
