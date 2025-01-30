@@ -70,7 +70,7 @@ int fn_bnd2(ulong2 pos, ulong2 dim)
 //    return (pos.x==0)||(pos.y==0)||(pos.z==0)||(pos.x==dim.x-1)||(pos.y==dim.y-1)||(pos.z==dim.z-1);
 }
 
-//coordinate
+//coordinate - !adj for stupid test!
 float2 fn_x1(ulong2 pos, const struct msh_obj *msh)
 {
     return msh->dx*convert_float2(convert_long2(pos) - msh->ne2);
@@ -137,6 +137,23 @@ float fn_g1(float2 x)
     float2 r = (float2){0.25f,0.25f};
 
     return sdf_cub(x, c, r);
+}
+
+//geometry
+float fn_g2(float2 x)
+{
+//    x = remainder(x + 0.25f , 0.5f);
+    
+    int2 q;
+    
+    float2 r = remquo(x, 0.5f, &q);
+    
+    return r.x;
+    
+//    float2 c = (float2){0.00f,0.00f};
+////    float2 r = (float2){0.2f,0.2f};
+//
+//    return sdf_sph(x, c, 0.25f);
 }
 
 
@@ -239,7 +256,7 @@ kernel void vtx_ini(const struct msh_obj    msh,
     rr[vtx_idx] = 0.0f;
     vv[vtx_idx] = (get_local_id(0));
     ww[vtx_idx] = convert_float(get_local_id(1));
-    gg[vtx_idx] = fn_g1(x);
+    gg[vtx_idx] = fn_g2(x);
     
     
     

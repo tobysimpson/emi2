@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
     ocl_ini(&ocl);
     
     //size
-    int n  = 3;
+    int n  = 5;
     
     //mesh (fine)
     struct msh_obj msh;
@@ -144,7 +144,7 @@ int main(int argc, const char * argv[])
 //            ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_zro, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
             
             //poisson0
-            mg_slv(&ocl, &mg, &mg.ops[0]);
+//            mg_slv(&ocl, &mg, &mg.ops[0]);
             
             
             /*
@@ -154,7 +154,7 @@ int main(int argc, const char * argv[])
              */
 
             //poisson1
-            mg_slv(&ocl, &mg, &mg.ops[1]);
+//            mg_slv(&ocl, &mg, &mg.ops[1]);
 
         } //t
 
