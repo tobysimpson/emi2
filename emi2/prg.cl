@@ -22,6 +22,7 @@ struct msh_obj
     uint2    le;
     ulong2   ne;
     ulong2   nv;
+    ulong2   iv;
     
     ulong    ne_tot;
     ulong    nv_tot;
@@ -251,14 +252,12 @@ kernel void vtx_ini(const struct msh_obj    msh,
     
 //    printf("%3lu %v3lu\n", vtx_idx, vtx_pos);
     
-    uu[vtx_idx] = fn_g0(x)<=0.0f;
+    uu[vtx_idx] = 0.0f;
     bb[vtx_idx] = 0.0f;
     rr[vtx_idx] = 0.0f;
-    vv[vtx_idx] = (get_local_id(0));
-    ww[vtx_idx] = convert_float(get_local_id(1));
-    gg[vtx_idx] = fn_g2(x);
-    
-    
+    vv[vtx_idx] = 0.0f;
+    ww[vtx_idx] = 0.0f;
+    gg[vtx_idx] = x.x;
     
     return;
 }
@@ -271,7 +270,7 @@ kernel void vtx_tst(int t,
                     global float            *vv,
                     global float            *ww)
 {
-    ulong2 vtx_pos  = {get_global_id(0), get_global_id(1)};
+    ulong2 vtx_pos  = (ulong2){get_global_id(0) + 1, get_global_id(1) + 1}; //interior
     ulong  vtx_idx  = fn_idx1(vtx_pos, msh.nv);
     
 //    float2 x = fn_x1(vtx_pos, &msh);
@@ -281,18 +280,12 @@ kernel void vtx_tst(int t,
     //stencil
     for(int k=0; k<4; k++)
     {
-        ulong2  adj_pos = vtx_pos + off_fac[k];
+//        ulong2  adj_pos = vtx_pos + off_fac[k];
 //        ulong   adj_idx = fn_idx1(adj_pos, msh.nv);
-        int     adj_bnd = fn_bnd1(adj_pos, msh.nv);     //domain
 
-        //domain
-        if(adj_bnd)
-        {
-            s += 1.0f;
-        }
+        s += 1.0f;
     }
     
-
     uu[vtx_idx] = s;
     vv[vtx_idx] = t;
     

@@ -46,7 +46,7 @@ struct ocl_obj
     
     //kernels
     cl_kernel           vtx_ini;    //init
-    cl_kernel           vtx_ion;    //membrane
+    cl_kernel           vtx_tst;    //membrane
     
 };
 

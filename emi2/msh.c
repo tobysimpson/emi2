@@ -14,6 +14,7 @@ void msh_ini(struct msh_obj *msh)
 {
     msh->ne     = (cl_ulong2){1<<msh->le.x, 1<<msh->le.y};
     msh->nv     = (cl_ulong2){msh->ne.x+1, msh->ne.y+1};
+    msh->iv     = (cl_ulong2){msh->nv.x-2, msh->nv.y-2};
     
     msh->ne_tot = msh->ne.x*msh->ne.y;
     msh->nv_tot = msh->nv.x*msh->nv.y;
@@ -23,6 +24,6 @@ void msh_ini(struct msh_obj *msh)
     msh->ne2    = (cl_long2){msh->ne.x/2, msh->ne.y/2};
     
     printf("msh %f %f %02d%02d [%3llu %3llu] %10llu\n", msh->dt, msh->dx, msh->le.x, msh->le.y, msh->ne.x, msh->ne.y, msh->nv_tot);
-    
+//    printf("iv %llu %llu\n",msh->iv.x, msh->iv.y);
     return;
 }

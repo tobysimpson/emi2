@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
     ocl_ini(&ocl);
     
     //size
-    int n  = 5;
+    int n  = 4;
     
     //mesh (fine)
     struct msh_obj msh;
@@ -65,10 +65,11 @@ int main(int argc, const char * argv[])
     ocl.err = clSetKernelArg(ocl.vtx_ini,  5, sizeof(cl_mem),            (void*)&ww);
     ocl.err = clSetKernelArg(ocl.vtx_ini,  6, sizeof(cl_mem),            (void*)&gg);
     
-    //ion
-    ocl.err = clSetKernelArg(ocl.vtx_ion,  0, sizeof(struct msh_obj),    (void*)&msh);
-    ocl.err = clSetKernelArg(ocl.vtx_ion,  1, sizeof(cl_mem),            (void*)&uu);
-    ocl.err = clSetKernelArg(ocl.vtx_ion,  2, sizeof(cl_mem),            (void*)&ww);
+    //test - 0 is t
+    ocl.err = clSetKernelArg(ocl.vtx_tst,  1, sizeof(struct msh_obj),    (void*)&msh);
+    ocl.err = clSetKernelArg(ocl.vtx_tst,  2, sizeof(cl_mem),            (void*)&uu);
+    ocl.err = clSetKernelArg(ocl.vtx_tst,  3, sizeof(cl_mem),            (void*)&vv);
+    ocl.err = clSetKernelArg(ocl.vtx_tst,  4, sizeof(cl_mem),            (void*)&ww);
     
     
     /*
@@ -80,51 +81,32 @@ int main(int argc, const char * argv[])
     //ini
     ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_ini, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
     
+    //time
+    int t = 0;
 
     //frames
-    for(int f=0; f<100; f++)
+    for(int frm=0; frm<100; frm++)
     {
-        if(f%10==0)
+        if(frm%10==0)
         {
-            printf("frm %2d\n", f);
+            printf("frm %2d %04d\n", frm, t);
         }
         
         //write
-        wrt_xmf(&ocl, &msh, f);
-        wrt_raw(&ocl, &msh, &uu, "uu", f);
-        wrt_raw(&ocl, &msh, &bb, "bb", f);
-        wrt_raw(&ocl, &msh, &rr, "rr", f);
-        wrt_raw(&ocl, &msh, &vv, "vv", f);
-        wrt_raw(&ocl, &msh, &ww, "ww", f);
-        wrt_raw(&ocl, &msh, &gg, "gg", f);
+        wrt_xmf(&ocl, &msh, frm);
+        wrt_raw(&ocl, &msh, &uu, "uu", frm);
+        wrt_raw(&ocl, &msh, &bb, "bb", frm);
+        wrt_raw(&ocl, &msh, &rr, "rr", frm);
+        wrt_raw(&ocl, &msh, &vv, "vv", frm);
+        wrt_raw(&ocl, &msh, &ww, "ww", frm);
+        wrt_raw(&ocl, &msh, &gg, "gg", frm);
         
         //timestep
-        for(int t=0; t<10; t++)
+        for(int itr=0; itr<10; itr++)
         {
-//            printf("tim %2d\n", t);
-            
-            /*
-             =============================
-             membrane
-             =============================
-             */
-            
-            //elec
-//            ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_ion, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
-            
-            
-            /*
-             =============================
-             heart
-             =============================
-             */
-            
-//            //set rhs
-//            ocl.err = clEnqueueCopyBuffer(ocl.command_queue, uu, bb, 0, 0, msh.nv_tot*sizeof(float), 0, NULL, NULL);
-//
-//            //heart ie
-//            mg_slv(&ocl, &mg, &ocl.ops[2]);
-
+            //test
+            ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(int), (void*)&t);
+            ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_tst, 2, NULL, (size_t*)&msh.iv, NULL, 0, NULL, NULL);
             
             /*
              =============================
@@ -132,11 +114,11 @@ int main(int argc, const char * argv[])
              =============================
              */
             
-            //set fine
-            mg.lvls[0].msh = msh;
-            mg.lvls[0].uu  = uu;
-            mg.lvls[0].bb  = bb;
-            mg.lvls[0].rr  = rr;
+//            //set fine
+//            mg.lvls[0].msh = msh;
+//            mg.lvls[0].uu  = uu;
+//            mg.lvls[0].bb  = bb;
+//            mg.lvls[0].rr  = rr;
             
 //            //reset
 //            ocl.err = clSetKernelArg(ocl.vtx_zro,  0, sizeof(struct msh_obj),    (void*)&msh);
@@ -145,16 +127,6 @@ int main(int argc, const char * argv[])
             
             //poisson0
 //            mg_slv(&ocl, &mg, &mg.ops[0]);
-            
-            
-            /*
-             =============================
-             poisson2
-             =============================
-             */
-
-            //poisson1
-//            mg_slv(&ocl, &mg, &mg.ops[1]);
 
         } //t
 

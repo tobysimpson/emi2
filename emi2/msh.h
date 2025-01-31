@@ -22,6 +22,7 @@ struct msh_obj
     cl_uint2    le;
     cl_ulong2   ne;
     cl_ulong2   nv;
+    cl_ulong2   iv;
     
     cl_ulong    ne_tot;
     cl_ulong    nv_tot;
