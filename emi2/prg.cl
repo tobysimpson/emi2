@@ -264,6 +264,41 @@ kernel void vtx_ini(const struct msh_obj    msh,
 }
 
 
+//init
+kernel void vtx_tst(int t,
+                    const struct msh_obj    msh,
+                    global float            *uu,
+                    global float            *vv,
+                    global float            *ww)
+{
+    ulong2 vtx_pos  = {get_global_id(0), get_global_id(1)};
+    ulong  vtx_idx  = fn_idx1(vtx_pos, msh.nv);
+    
+//    float2 x = fn_x1(vtx_pos, &msh);
+    
+    float  s = 0.0f;
+    
+    //stencil
+    for(int k=0; k<4; k++)
+    {
+        ulong2  adj_pos = vtx_pos + off_fac[k];
+//        ulong   adj_idx = fn_idx1(adj_pos, msh.nv);
+        int     adj_bnd = fn_bnd1(adj_pos, msh.nv);     //domain
+
+        //domain
+        if(adj_bnd)
+        {
+            s += 1.0f;
+        }
+    }
+    
+
+    uu[vtx_idx] = s;
+    vv[vtx_idx] = t;
+    
+    return;
+}
+
 
 /*
  ===============
