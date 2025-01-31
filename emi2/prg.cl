@@ -264,7 +264,7 @@ kernel void vtx_ini(const struct msh_obj    msh,
 
 
 //init
-kernel void vtx_tst(int t,
+kernel void vtx_tst(int                     t,
                     const struct msh_obj    msh,
                     global float            *uu,
                     global float            *vv,
@@ -289,46 +289,6 @@ kernel void vtx_tst(int t,
     uu[vtx_idx] = s;
     vv[vtx_idx] = t;
     
-    return;
-}
-
-
-/*
- ===============
- membrane
- ===============
- */
-
-//mitchell-schaffer
-constant float MS_V_GATE    = 0.13f;        //dimensionless (13 in the paper 15 for N?)
-constant float MS_TAU_IN    = 0.3f;         //milliseconds
-constant float MS_TAU_OUT   = 6.0f;         //should be 6.0
-constant float MS_TAU_OPEN  = 120.0f;       //milliseconds
-constant float MS_TAU_CLOSE = 100.0f;       //90 endocardium to 130 epi - longer
-
-
-
-//mitchell-schaffer
-kernel void vtx_ion(const  struct msh_obj  msh,
-                    global float           *uu,
-                    global float           *ww)
-{
-    ulong2 vtx_pos  = {get_global_id(0), get_global_id(1)};
-    ulong  vtx_idx  = fn_idx1(vtx_pos, msh.nv);
-    
-    float2 x = fn_x1(vtx_pos, &msh);
-
-    float u = uu[vtx_idx];
-    float w = ww[vtx_idx];
-    
-    //mitchell-schaffer
-    float du = (w*u*u*(1.0f-u)/MS_TAU_IN) - (u/MS_TAU_OUT);                   //ms dimensionless J_in, J_out, J_stim
-    float dw = (u<MS_V_GATE)?((1.0f - w)/MS_TAU_OPEN):(-w)/MS_TAU_CLOSE;      //gating variable
-
-    //store
-    uu[vtx_idx] += (fn_g1(x)<= 0e0f)?msh.dt*du:0e0f;
-    ww[vtx_idx] += (fn_g1(x)<= 0e0f)?msh.dt*dw:0e0f;
-
     return;
 }
 

@@ -95,7 +95,7 @@ void ocl_ini(struct ocl_obj *ocl)
      */
     
     ocl->vtx_ini = clCreateKernel(ocl->program, "vtx_ini", &ocl->err);
-    ocl->vtx_tst = clCreateKernel(ocl->program, "vtx_ion", &ocl->err);
+    ocl->vtx_tst = clCreateKernel(ocl->program, "vtx_tst", &ocl->err);
     
 
 }

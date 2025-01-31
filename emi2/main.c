@@ -89,7 +89,7 @@ int main(int argc, const char * argv[])
     {
         if(frm%10==0)
         {
-            printf("frm %2d %04d\n", frm, t);
+            printf("frm %02d %04d\n", frm, t);
         }
         
         //write
@@ -102,8 +102,11 @@ int main(int argc, const char * argv[])
         wrt_raw(&ocl, &msh, &gg, "gg", frm);
         
         //timestep
-        for(int itr=0; itr<10; itr++)
+        for(int itr=0; itr<100; itr++)
         {
+            //time
+            t += 1;
+            
             //test
             ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(int), (void*)&t);
             ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_tst, 2, NULL, (size_t*)&msh.iv, NULL, 0, NULL, NULL);
