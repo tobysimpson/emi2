@@ -252,10 +252,10 @@ kernel void vtx_ini(const struct msh_obj    msh,
     
 //    printf("%3lu %v3lu\n", vtx_idx, vtx_pos);
     
-    float u = 8.0f*M_PI_F*M_PI_F*sin(2.0f*M_PI_F*x.x)*sin(2.0f*M_PI_F*x.y);
+    
     
     uu[vtx_idx] = 0.0f;
-    bb[vtx_idx] = u;
+    bb[vtx_idx] = 0.0f;
     rr[vtx_idx] = 0.0f;
     vv[vtx_idx] = 0.0f;
     ww[vtx_idx] = 0.0f;
@@ -266,7 +266,7 @@ kernel void vtx_ini(const struct msh_obj    msh,
 
 
 //init
-kernel void vtx_tst(int                     t,
+kernel void vtx_tst(float                   t,
                     const struct msh_obj    msh,
                     global float            *uu,
                     global float            *vv,
@@ -277,18 +277,21 @@ kernel void vtx_tst(int                     t,
     
     float2 x = fn_x1(vtx_pos, &msh);
     
-    float  s = 0.0f;
+    float f = -8.0f*M_PI_F*M_PI_F*sin(2.0f*M_PI_F*x.x)*sin(2.0f*M_PI_F*x.y)*(1.0f + exp(-t));
+    float g = -8.0f*M_PI_F*M_PI_F*sin(2.0f*M_PI_F*x.x)*sin(2.0f*M_PI_F*x.y);
     
-    //stencil
-    for(int k=0; k<4; k++)
-    {
-//        ulong2  adj_pos = vtx_pos + off_fac[k];
-//        ulong   adj_idx = fn_idx1(adj_pos, msh.nv);
-
-        s += fn_g1(x)<=0.0f;
-    }
+//    float  s = 0.0f;
     
-    uu[vtx_idx] = s;
+//    //stencil
+//    for(int k=0; k<4; k++)
+//    {
+////        ulong2  adj_pos = vtx_pos + off_fac[k];
+////        ulong   adj_idx = fn_idx1(adj_pos, msh.nv);
+//
+//        s += fn_g1(x)<=0.0f;
+//    }
+    
+    uu[vtx_idx] = (fn_g1(x)<=0.0f)?f:g;
     vv[vtx_idx] = t;
     
     return;

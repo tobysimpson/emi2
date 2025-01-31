@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
     
     //mesh (fine)
     struct msh_obj msh;
-    msh.dt = 0.01f;
+    msh.dt = 1e-2f;
     msh.dx = 1.0f/pow(2.0f,n);
     msh.le = (cl_uint2){n,n};
     msh_ini(&msh);
@@ -40,7 +40,6 @@ int main(int argc, const char * argv[])
     mg.nj = 3;
     mg.nc = 1;
     mg_ini(&ocl, &mg, &msh);
-    
 
     //memory
     cl_mem uu = clCreateBuffer(ocl.context, CL_MEM_HOST_READ_ONLY, msh.nv_tot*sizeof(float), NULL, &ocl.err);
@@ -82,33 +81,24 @@ int main(int argc, const char * argv[])
     ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_ini, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
     
     //time
-    cl_int t = 0;
+    cl_float t = 0.0f;
 
     //frames
     for(int frm=0; frm<100; frm++)
     {
         if(frm%10==0)
         {
-            printf("frm %02d %04d\n", frm, t);
+            printf("frm %02d %f\n", frm, t);
         }
         
-        //write
-        wrt_xmf(&ocl, &msh, frm);
-        wrt_raw(&ocl, &msh, &uu, "uu", frm);
-        wrt_raw(&ocl, &msh, &bb, "bb", frm);
-        wrt_raw(&ocl, &msh, &rr, "rr", frm);
-        wrt_raw(&ocl, &msh, &vv, "vv", frm);
-        wrt_raw(&ocl, &msh, &ww, "ww", frm);
-        wrt_raw(&ocl, &msh, &gg, "gg", frm);
-        
         //timestep
-        for(int itr=0; itr<100; itr++)
+        for(int itr=0; itr<1; itr++)
         {
             //time
-            t += 1;
+            t += msh.dt;
             
             //test
-            ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(cl_int), (void*)&t);
+            ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(cl_float), (void*)&t);
             ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_tst, 2, NULL, (size_t*)&msh.iv, NULL, 0, NULL, NULL);
             
             /*
@@ -130,6 +120,15 @@ int main(int argc, const char * argv[])
             
             //poisson0
 //            mg_slv(&ocl, &mg, &mg.ops[0]);
+            
+            //write
+            wrt_xmf(&ocl, &msh, frm);
+            wrt_raw(&ocl, &msh, &uu, "uu", frm);
+            wrt_raw(&ocl, &msh, &bb, "bb", frm);
+            wrt_raw(&ocl, &msh, &rr, "rr", frm);
+            wrt_raw(&ocl, &msh, &vv, "vv", frm);
+            wrt_raw(&ocl, &msh, &ww, "ww", frm);
+            wrt_raw(&ocl, &msh, &gg, "gg", frm);
 
         } //t
 
