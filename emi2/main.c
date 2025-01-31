@@ -82,7 +82,7 @@ int main(int argc, const char * argv[])
     ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_ini, 2, NULL, (size_t*)&msh.nv, NULL, 0, NULL, NULL);
     
     //time
-    int t = 0;
+    cl_int t = 0;
 
     //frames
     for(int frm=0; frm<100; frm++)
@@ -108,7 +108,7 @@ int main(int argc, const char * argv[])
             t += 1;
             
             //test
-            ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(int), (void*)&t);
+            ocl.err = clSetKernelArg(ocl.vtx_tst,  0, sizeof(cl_int), (void*)&t);
             ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_tst, 2, NULL, (size_t*)&msh.iv, NULL, 0, NULL, NULL);
             
             /*

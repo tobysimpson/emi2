@@ -252,12 +252,14 @@ kernel void vtx_ini(const struct msh_obj    msh,
     
 //    printf("%3lu %v3lu\n", vtx_idx, vtx_pos);
     
+    float u = 8.0f*M_PI_F*M_PI_F*sin(2.0f*M_PI_F*x.x)*sin(2.0f*M_PI_F*x.y);
+    
     uu[vtx_idx] = 0.0f;
-    bb[vtx_idx] = 0.0f;
+    bb[vtx_idx] = u;
     rr[vtx_idx] = 0.0f;
     vv[vtx_idx] = 0.0f;
     ww[vtx_idx] = 0.0f;
-    gg[vtx_idx] = x.x;
+    gg[vtx_idx] = fn_g1(x);
     
     return;
 }
@@ -273,7 +275,7 @@ kernel void vtx_tst(int                     t,
     ulong2 vtx_pos  = (ulong2){get_global_id(0) + 1, get_global_id(1) + 1}; //interior
     ulong  vtx_idx  = fn_idx1(vtx_pos, msh.nv);
     
-//    float2 x = fn_x1(vtx_pos, &msh);
+    float2 x = fn_x1(vtx_pos, &msh);
     
     float  s = 0.0f;
     
@@ -283,7 +285,7 @@ kernel void vtx_tst(int                     t,
 //        ulong2  adj_pos = vtx_pos + off_fac[k];
 //        ulong   adj_idx = fn_idx1(adj_pos, msh.nv);
 
-        s += 1.0f;
+        s += fn_g1(x)<=0.0f;
     }
     
     uu[vtx_idx] = s;
